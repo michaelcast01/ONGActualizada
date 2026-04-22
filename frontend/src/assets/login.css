@@ -1,0 +1,24 @@
+/* Login CSS - Compatibilidad (estilos movidos a login.vue) */
+/* Se recomienda usar los estilos del componente login.vue */
+
+  
+  .error {
+    color: #f87171;
+    text-align: center;
+    margin-top: 16px;
+    font-weight: 500;
+    font-size: 14px;
+  }
+  
+  /* Animación de entrada */
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

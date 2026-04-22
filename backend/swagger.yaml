@@ -1,0 +1,219 @@
+openapi: 3.0.3
+info:
+  title: Sistema Logistico Colombia
+  description: API generica para administrar las tablas operativas del esquema Colombia.
+  version: 2.0.0
+
+servers:
+  - url: http://localhost:3000
+    description: Desarrollo local
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LoginRequest:
+      type: object
+      required: [usuario, contraseña]
+      properties:
+        usuario:
+          type: string
+          example: usuario_0001
+        contraseña:
+          type: string
+          example: ClaveColombia2026!1
+    LoginResponse:
+      type: object
+      properties:
+        token:
+          type: string
+        usuario:
+          type: object
+          properties:
+            id:
+              type: integer
+            nombre:
+              type: string
+            correo:
+              type: string
+            rol:
+              type: string
+    SearchRequest:
+      type: object
+      properties:
+        primaryTable:
+          type: string
+          example: beneficiario
+        filters:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: genero
+              operator:
+                type: string
+                example: =
+              value:
+                oneOf:
+                  - type: string
+                  - type: number
+                  - type: boolean
+                  - type: array
+
+security:
+  - BearerAuth: []
+
+paths:
+  /api/auth/login:
+    post:
+      security: []
+      summary: Iniciar sesion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Acceso concedido
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+  /api/meta/app:
+    get:
+      summary: Obtener configuracion del aplicativo
+      responses:
+        '200':
+          description: Metadatos del frontend
+  /api/records/{table}:
+    get:
+      summary: Listar registros de una tabla
+      parameters:
+        - in: path
+          name: table
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: page
+          schema:
+            type: integer
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+        - in: query
+          name: q
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Registros paginados
+    post:
+      summary: Crear registro en una tabla permitida
+      parameters:
+        - in: path
+          name: table
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '201':
+          description: Registro creado
+    delete:
+      summary: Eliminar registro en tabla con llave compuesta
+      parameters:
+        - in: path
+          name: table
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Registro eliminado
+  /api/records/{table}/{id}:
+    get:
+      summary: Obtener registro por ID en tablas con llave simple
+      parameters:
+        - in: path
+          name: table
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Registro encontrado
+    put:
+      summary: Actualizar registro por ID
+      parameters:
+        - in: path
+          name: table
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        '200':
+          description: Registro actualizado
+    delete:
+      summary: Eliminar registro por ID
+      parameters:
+        - in: path
+          name: table
+          required: true
+          schema:
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Registro eliminado
+  /api/search/execute:
+    post:
+      summary: Ejecutar busqueda avanzada parametrizada
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchRequest'
+      responses:
+        '200':
+          description: Resultados de la busqueda

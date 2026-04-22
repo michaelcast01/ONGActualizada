@@ -1,0 +1,147 @@
+-- Para la tabla tbl_admin
+SELECT * FROM tbl_admin;
+
+-- Para la tabla tbl_menu
+SELECT * FROM tbl_menu;
+
+-- Para la tabla tbl_menuitem
+SELECT * FROM tbl_menuitem;
+
+-- Para la tabla tbl_order
+SELECT * FROM tbl_order;
+
+-- Para la tabla tbl_orderdetail
+SELECT * FROM tbl_orderdetail;
+
+-- Para la tabla tbl_role
+SELECT * FROM tbl_role;
+
+-- Para la tabla tbl_staff
+SELECT * FROM tbl_staff;
+
+-- Para la tabla tbl_reports
+SELECT * FROM tbl_reports;
+
+
+URL NECESARIAS 
+
+📦 tbl_admin
+Método	URL	Descripción
+GET	http://localhost:3000/admin	Obtener todos los admin
+GET	http://localhost:3000/admin/:id	Obtener admin por ID
+POST	http://localhost:3000/admin	Crear nuevo admin
+PUT	http://localhost:3000/admin/:id	Actualizar admin por ID
+DELETE	http://localhost:3000/admin/:id	Eliminar admin por ID
+
+📦 tbl_menu
+Método	URL	Descripción
+GET	http://localhost:3000/menu	Obtener todos los menús
+GET	http://localhost:3000/menu/:id	Obtener menú por ID
+POST	http://localhost:3000/menu	Crear nuevo menú
+PUT	http://localhost:3000/menu/:id	Actualizar menú por ID
+DELETE	http://localhost:3000/menu/:id	Eliminar menú por ID
+
+📦 tbl_menuitem
+Método	URL	Descripción
+GET	http://localhost:3000/menuitem	Obtener todos los items de menú
+GET	http://localhost:3000/menuitem/:id	Obtener item de menú por ID
+POST	http://localhost:3000/menuitem	Crear nuevo item de menú
+PUT	http://localhost:3000/menuitem/:id	Actualizar item de menú por ID
+DELETE	http://localhost:3000/menuitem/:id	Eliminar item de menú por ID
+
+📦 tbl_order
+Método	URL	Descripción
+GET	http://localhost:3000/order	Obtener todas las órdenes
+GET	http://localhost:3000/order/:id	Obtener orden por ID
+POST	http://localhost:3000/order	Crear nueva orden
+PUT	http://localhost:3000/order/:id	Actualizar orden por ID
+DELETE	http://localhost:3000/order/:id	Eliminar orden por ID
+
+📦 tbl_orderdetail
+Método	URL	Descripción
+GET	http://localhost:3000/orderdetail	Obtener todos los detalles de orden
+GET	http://localhost:3000/orderdetail/:id	Obtener detalle de orden por ID
+POST	http://localhost:3000/orderdetail	Crear nuevo detalle de orden
+PUT	http://localhost:3000/orderdetail/:id	Actualizar detalle de orden por ID
+DELETE	http://localhost:3000/orderdetail/:id	Eliminar detalle de orden por ID
+
+📦 tbl_staff
+Método	URL	Descripción
+GET	http://localhost:3000/staff	Obtener todos los empleados
+GET	http://localhost:3000/staff/:id	Obtener empleado por ID
+POST	http://localhost:3000/staff	Crear nuevo empleado
+PUT	http://localhost:3000/staff/:id	Actualizar empleado por ID
+DELETE	http://localhost:3000/staff/:id	Eliminar empleado por ID
+
+📦 tbl_reports
+Método	URL	Descripción
+GET	http://localhost:3000/reports	Obtener todos los reportes
+GET	http://localhost:3000/reports/:id	Obtener reporte por ID
+POST	http://localhost:3000/reports	Crear nuevo reporte
+PUT	http://localhost:3000/reports/:id	Actualizar reporte por ID
+DELETE	http://localhost:3000/reports/:id	Eliminar reporte por ID
+
+📦 tbl_role
+Método	URL	Descripción
+GET	http://localhost:3000/role	Obtener todos los roles
+GET	http://localhost:3000/role/:id es el nombre del rol, para mmesero es "Mesero" y para chef si es en minuscula	Obtener rol por ID
+POST	http://localhost:3000/role	Crear nuevo rol
+PUT	http://localhost:3000/role/:id	Actualizar rol por ID
+DELETE	http://localhost:3000/role/:id	Eliminar rol por ID
+
+PARA PODER ENTRAR 
+
+para inicializar el node.js y obtener las url y realizar consultas debemos inicializarlo en una terminal de visual studio 
+1.cd backend
+nodemon server.js
+npm start
+
+
+inicializar en una terminal en visual, en veu podemos interactuar con la interfaz grafica 
+2.cd frontend
+npm run dev
+
+
+DEPENDENCIAS previamente, una por una 
+
+npm init -y
+npm install express
+npm install pg
+npm install dotenv
+npm install cors
+npm install --save-dev nodemon
+npm install mysql2
+
+
+opción 2 menos líneas de código 
+npm init -y
+npm install express pg dotenv cors
+npm install --save-dev nodemon
+
+DEPENDENCIAS que se instalaron pero la version optimizada 
+
+npm init -y
+npm install express cors body-parser pg axios
+npm install --save-dev nodemon
+npm create vite@latest
+cd frontend
+npm install
+npm install vue-router@4 vuex@4 axios
+npm install -g nodemon
+npm install --save-dev nodemon
+npm install --save-dev concurrently para levantar los dos servicios en paralelo
+
+el proyecto se inicializa con el comando 
+
+npm start: este comando me permite levantar los dos servicios de manera paralela 
+
+dentro de la carpeta raiz del proyecto vamos a encontar la carpeta backend y dentro de ella 
+el archivo db.js que es la conexion a la base de datos, el earchivo server.js que nos permite 
+realizar el llamado a las apis.
+
+dentro de la carpeta backend encontraremos la carpeta routes y en la cual encontraremos los archivos que contienen 
+las 8 apis.
+
+dentro de la carpeta frontend encontraremos la carpeta src encontraremos las carpetas assets y en ella los css 
+del login y de nuestro front, en esa misma carpeta src encontraremos la carpeta components y en ella tendremos los archivos 
+necesarios para que funcionen nuestro front.
