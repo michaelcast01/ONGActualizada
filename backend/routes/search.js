@@ -383,9 +383,10 @@ module.exports = (pool, entityConfig) => {
    * POST /api/search/export/json
    * Exporta resultados a JSON
    */
-  router.post('/export/json', authenticateToken, async (req, res) => {
+  router.post('/export/json', async (req, res) => {
     try {
       const searchParams = req.body;
+      validateAllowedTable(searchParams.primaryTable);
 
       // Construir y ejecutar query
       const queryObj = await queryBuilder.buildQuery(searchParams);
@@ -409,7 +410,7 @@ module.exports = (pool, entityConfig) => {
    * DELETE /api/search/cache
    * Invalida el cache de schema
    */
-  router.delete('/cache', authenticateToken, async (req, res) => {
+  router.delete('/cache', async (req, res) => {
     try {
       schemaManager.invalidateCache();
 

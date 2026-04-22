@@ -6,8 +6,9 @@
       <Card variant="primary" class="login-card">
         <!-- Logo -->
         <div class="login-header">
-          <div class="logo-container">🎯</div>
-          <p class="login-subtitle">Sistema de Información ONG</p>
+          <div class="logo-container">CO</div>
+          <p class="login-subtitle">Sistema Logistico Colombia</p>
+          <p class="login-hint">Si cargaste el seed Colombia: usuario_0001 / ClaveColombia2026!1</p>
         </div>
 
         <!-- Formulario -->
@@ -59,7 +60,7 @@
 
         <!-- Pie de página -->
         <div class="login-footer">
-          <p>© 2026 UNIMINUTO - Todos los derechos reservados</p>
+          <p>© 2026 Plataforma operativa para gestion social y logistica</p>
         </div>
       </Card>
     </div>
@@ -114,10 +115,10 @@ const login = async () => {
 
     success('¡Bienvenido! Redirigiendo...')
 
-    // Redirigir a apitester como página principal
-    setTimeout(() => {
-      router.push('/apitester')
-    }, 500)
+      // Redirigir al centro operativo
+      setTimeout(() => {
+        router.push('/app')
+      }, 500)
   } catch (err) {
     error.value = 'Error de conexión: ' + err.message
   } finally {
@@ -187,6 +188,12 @@ const login = async () => {
   font-weight: var(--font-weight-semibold);
   margin: 0;
   letter-spacing: 0.3px;
+}
+
+.login-hint {
+  margin-top: var(--spacing-sm);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
 }
 
 .login-form {
