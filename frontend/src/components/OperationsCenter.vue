@@ -15,7 +15,7 @@
       <header class="page-header">
         <div>
           <p class="eyebrow">{{ metadata?.app?.name }}</p>
-          <h1>{{ selectedEntity?.label || 'Centro operativo' }}</h1>
+          <h1>{{ selectedEntity?.label || 'Centro de consulta' }}</h1>
           <p class="page-description">{{ selectedEntity?.description || metadata?.app?.subtitle }}</p>
         </div>
 
@@ -34,17 +34,17 @@
           <div class="metric-value">{{ selectedEntity?.label }}</div>
           <p class="metric-text">Categoria {{ selectedEntity?.category || 'General' }}</p>
         </Card>
-        <Card title="Registros en vista" variant="success">
+        <Card title="Registros disponibles" variant="success">
           <div class="metric-value">{{ pagination.total }}</div>
-          <p class="metric-text">Total actual para la tabla seleccionada.</p>
+          <p class="metric-text">Total actual encontrado para la tabla seleccionada.</p>
         </Card>
-        <Card title="Llave primaria" variant="default">
+        <Card title="Llave principal" variant="default">
           <div class="metric-value metric-small">{{ selectedEntity?.primaryKeys?.join(', ') || 'Sin definir' }}</div>
-          <p class="metric-text">{{ selectedEntity?.hasSimplePrimaryKey ? 'CRUD completo habilitado.' : 'Llave compuesta.' }}</p>
+          <p class="metric-text">{{ selectedEntity?.hasSimplePrimaryKey ? 'Referencia principal para consulta.' : 'Consulta basada en llave compuesta.' }}</p>
         </Card>
-        <Card title="Acceso de prueba" variant="default">
-          <div class="metric-value metric-small">{{ metadata?.app?.sampleLogin?.username }}</div>
-          <p class="metric-text">Clave {{ metadata?.app?.sampleLogin?.password }}</p>
+        <Card title="Modo de acceso" variant="default">
+          <div class="metric-value metric-small">Solo consulta</div>
+          <p class="metric-text">La aplicacion muestra informacion sin opciones de registro o edicion.</p>
         </Card>
       </section>
 
@@ -91,12 +91,11 @@
 
               <div class="toolbar-actions">
                 <Button label="Consultar" variant="primary" :loading="loadingRecords" @click="loadRecords(true)" />
-                <Button label="Nueva fila" variant="secondary" :disabled="!selectedEntity?.allowCreate" @click="openCreateForm" />
               </div>
             </div>
           </Card>
 
-          <Card title="Busqueda avanzada" class="filters-card">
+          <Card title="Filtros de consulta avanzada" class="filters-card">
             <div class="filters-stack">
               <div v-for="filter in filters" :key="filter.id" class="filter-row">
                 <select v-model="filter.field" class="select-input" @change="onFilterFieldChange(filter)">
@@ -133,8 +132,8 @@
                   placeholder="Valor final"
                 />
 
-                <button type="button" class="mini-action danger" @click="removeFilter(filter.id)">Quitar</button>
-              </div>
+                  <button type="button" class="mini-action danger" @click="removeFilter(filter.id)">Quitar</button>
+                </div>
 
               <div class="filter-actions">
                 <button type="button" class="mini-action" @click="addFilter">Agregar filtro</button>
@@ -160,37 +159,18 @@
                 <thead>
                   <tr>
                     <th v-for="column in visibleColumns" :key="column.name">{{ column.name }}</th>
-                    <th class="actions-column">Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="record in records" :key="recordKey(record)">
                     <td v-for="column in visibleColumns" :key="column.name">{{ formatCell(record[column.name]) }}</td>
-                    <td class="row-actions">
-                      <button
-                        v-if="selectedEntity?.allowUpdate && selectedEntity?.hasSimplePrimaryKey"
-                        type="button"
-                        class="mini-action"
-                        @click="openEditForm(record)"
-                      >
-                        Editar
-                      </button>
-                      <button
-                        v-if="selectedEntity?.allowDelete"
-                        type="button"
-                        class="mini-action danger"
-                        @click="deleteRecord(record)"
-                      >
-                        Eliminar
-                      </button>
-                    </td>
                   </tr>
                 </tbody>
               </table>
 
               <div v-else class="empty-state">
                 <h3>Sin resultados</h3>
-                <p>No se encontraron registros con los criterios actuales.</p>
+                <p>No se encontraron registros con los criterios de consulta actuales.</p>
               </div>
             </div>
 
@@ -206,53 +186,6 @@
       </div>
     </template>
 
-    <div v-if="showForm" class="modal-backdrop" @click.self="closeForm">
-      <div class="modal-panel">
-        <div class="modal-header">
-          <div>
-            <p class="eyebrow">{{ formMode === 'create' ? 'Crear registro' : 'Editar registro' }}</p>
-            <h2>{{ selectedEntity?.label }}</h2>
-          </div>
-          <button type="button" class="close-button" @click="closeForm">Cerrar</button>
-        </div>
-
-        <form class="modal-form" @submit.prevent="submitForm">
-          <div class="form-grid">
-            <div v-for="column in editableColumns" :key="column.name" class="field-block">
-              <label :for="column.name">{{ column.name }}</label>
-
-              <select v-if="column.type === 'boolean'" :id="column.name" v-model="formData[column.name]" class="select-input">
-                <option value="">Sin valor</option>
-                <option :value="true">Si</option>
-                <option :value="false">No</option>
-              </select>
-
-              <textarea
-                v-else-if="resolveInputType(column) === 'textarea'"
-                :id="column.name"
-                v-model="formData[column.name]"
-                class="text-area"
-                :placeholder="column.name"
-              ></textarea>
-
-              <input
-                v-else
-                :id="column.name"
-                v-model="formData[column.name]"
-                :type="resolveInputType(column)"
-                class="text-input"
-                :placeholder="column.name"
-              />
-            </div>
-          </div>
-
-          <div class="modal-actions">
-            <Button label="Cancelar" variant="ghost" @click="closeForm" />
-            <Button :label="formMode === 'create' ? 'Guardar' : 'Actualizar'" variant="primary" :loading="savingRecord" />
-          </div>
-        </form>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -271,7 +204,6 @@ const { toasts, success, error: notifyError } = useToast()
 
 const loadingApp = ref(true)
 const loadingRecords = ref(false)
-const savingRecord = ref(false)
 const metadata = ref(null)
 const records = ref([])
 const selectedTable = ref('')
@@ -279,9 +211,6 @@ const searchText = ref('')
 const sortField = ref('')
 const sortDirection = ref('ASC')
 const errorMessage = ref('')
-const showForm = ref(false)
-const formMode = ref('create')
-const editingRecord = ref(null)
 const filters = ref([])
 
 const pagination = reactive({
@@ -290,8 +219,6 @@ const pagination = reactive({
   total: 0,
   totalPages: 1
 })
-
-const formData = reactive({})
 
 const currentUser = computed(() => {
   const storedUser = localStorage.getItem('usuario')
@@ -334,20 +261,6 @@ const visibleColumns = computed(() => {
   return selectedEntity.value.listFields
     .map((field) => selectedEntity.value.columns.find((column) => column.name === field))
     .filter(Boolean)
-})
-
-const editableColumns = computed(() => {
-  if (!selectedEntity.value) {
-    return []
-  }
-
-  return selectedEntity.value.columns.filter((column) => {
-    if (formMode.value === 'create') {
-      return column.editableOnCreate
-    }
-
-    return column.editableOnUpdate
-  })
 })
 
 const authHeaders = () => {
@@ -610,172 +523,6 @@ const loadRecords = async (resetPage = false) => {
 const goToPage = async (page) => {
   pagination.page = page
   await loadRecords(false)
-}
-
-const resetFormData = () => {
-  Object.keys(formData).forEach((key) => {
-    delete formData[key]
-  })
-}
-
-const formatForInput = (column, value) => {
-  if (value === null || value === undefined) {
-    return column.type === 'boolean' ? '' : ''
-  }
-
-  if (column.type === 'boolean') {
-    return value
-  }
-
-  if (column.type === 'date') {
-    return String(value).slice(0, 10)
-  }
-
-  if (column.type === 'datetime') {
-    return String(value).replace('Z', '').slice(0, 16)
-  }
-
-  if (column.type === 'json') {
-    return JSON.stringify(value, null, 2)
-  }
-
-  return value
-}
-
-const openCreateForm = () => {
-  if (!selectedEntity.value?.allowCreate) {
-    return
-  }
-
-  formMode.value = 'create'
-  editingRecord.value = null
-  resetFormData()
-
-  editableColumns.value.forEach((column) => {
-    formData[column.name] = column.type === 'boolean' ? '' : ''
-  })
-
-  showForm.value = true
-}
-
-const openEditForm = (record) => {
-  formMode.value = 'update'
-  editingRecord.value = record
-  resetFormData()
-
-  editableColumns.value.forEach((column) => {
-    formData[column.name] = formatForInput(column, record[column.name])
-  })
-
-  showForm.value = true
-}
-
-const closeForm = () => {
-  showForm.value = false
-  editingRecord.value = null
-  resetFormData()
-}
-
-const resolveInputType = (column) => {
-  if (!column) {
-    return 'text'
-  }
-
-  if (column.type === 'number') {
-    return 'number'
-  }
-
-  if (column.type === 'date') {
-    return 'date'
-  }
-
-  if (column.type === 'datetime') {
-    return 'datetime-local'
-  }
-
-  if (column.type === 'json') {
-    return 'textarea'
-  }
-
-  if (column.displayType === 'textarea') {
-    return 'textarea'
-  }
-
-  return 'text'
-}
-
-const buildPayload = () => {
-  const payload = {}
-  editableColumns.value.forEach((column) => {
-    payload[column.name] = normalizeByColumn(column, formData[column.name])
-  })
-  return payload
-}
-
-const submitForm = async () => {
-  savingRecord.value = true
-
-  try {
-    const payload = buildPayload()
-    if (formMode.value === 'create') {
-      await fetchJson(`${API_BASE}/records/${selectedTable.value}`, {
-        method: 'POST',
-        headers: authHeaders(),
-        body: JSON.stringify(payload)
-      })
-      success('Registro creado correctamente')
-    } else {
-      const primaryKey = selectedEntity.value.primaryKeys[0]
-      await fetchJson(`${API_BASE}/records/${selectedTable.value}/${editingRecord.value[primaryKey]}`, {
-        method: 'PUT',
-        headers: authHeaders(),
-        body: JSON.stringify(payload)
-      })
-      success('Registro actualizado correctamente')
-    }
-
-    closeForm()
-    await loadMetadata()
-  } catch (err) {
-    notifyError(err.message)
-  } finally {
-    savingRecord.value = false
-  }
-}
-
-const primaryKeyPayload = (record) => {
-  const payload = {}
-  selectedEntity.value.primaryKeys.forEach((primaryKey) => {
-    payload[primaryKey] = record[primaryKey]
-  })
-  return payload
-}
-
-const deleteRecord = async (record) => {
-  if (!window.confirm('Esta accion eliminara el registro seleccionado. ¿Deseas continuar?')) {
-    return
-  }
-
-  try {
-    if (selectedEntity.value.hasSimplePrimaryKey) {
-      const primaryKey = selectedEntity.value.primaryKeys[0]
-      await fetchJson(`${API_BASE}/records/${selectedTable.value}/${record[primaryKey]}`, {
-        method: 'DELETE',
-        headers: authHeaders()
-      })
-    } else {
-      await fetchJson(`${API_BASE}/records/${selectedTable.value}`, {
-        method: 'DELETE',
-        headers: authHeaders(),
-        body: JSON.stringify(primaryKeyPayload(record))
-      })
-    }
-
-    success('Registro eliminado correctamente')
-    await loadMetadata()
-  } catch (err) {
-    notifyError(err.message)
-  }
 }
 
 const recordKey = (record) => {
@@ -1107,15 +854,6 @@ onMounted(loadMetadata)
   color: var(--color-gray-600);
 }
 
-.actions-column {
-  min-width: 160px;
-}
-
-.row-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
 .empty-state {
   border: 1px dashed var(--color-gray-300);
   border-radius: 16px;
@@ -1132,58 +870,6 @@ onMounted(loadMetadata)
 
 .pagination-actions {
   display: flex;
-  gap: 0.75rem;
-}
-
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.55);
-  display: grid;
-  place-items: center;
-  z-index: 1500;
-  padding: 1.5rem;
-}
-
-.modal-panel {
-  width: min(960px, 100%);
-  background: white;
-  border-radius: 24px;
-  box-shadow: var(--shadow-xl);
-  max-height: calc(100vh - 3rem);
-  overflow: auto;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1.5rem;
-  border-bottom: 1px solid var(--color-gray-200);
-}
-
-.close-button {
-  border: 0;
-  background: rgba(0, 52, 120, 0.08);
-  border-radius: 999px;
-  padding: 0.7rem 1rem;
-  cursor: pointer;
-}
-
-.modal-form {
-  padding: 1.5rem;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
-}
-
-.modal-actions {
-  margin-top: 1.5rem;
-  display: flex;
-  justify-content: flex-end;
   gap: 0.75rem;
 }
 
@@ -1213,15 +899,9 @@ onMounted(loadMetadata)
 
   .header-actions,
   .toolbar-actions,
-  .row-actions,
   .filter-actions,
-  .pagination-actions,
-  .modal-actions {
+  .pagination-actions {
     flex-wrap: wrap;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
   }
 }
 

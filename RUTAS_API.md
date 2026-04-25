@@ -1,19 +1,21 @@
-# 🚀 RUTAS API - Sistema de Gestión Social ONG
+# Rutas API
 
-## 📋 Base URL
-```
+Base URL local:
+
+```txt
 http://localhost:3000
 ```
 
-## 🔐 Autenticación
+## Autenticacion
 
-### 1. Login
-```
+### Login
+
+```http
 POST /api/auth/login
 ```
-**Descripción:** Obtener token JWT para acceso a rutas protegidas
 
-**Body:**
+Body:
+
 ```json
 {
   "usuario": "admin",
@@ -21,10 +23,11 @@ POST /api/auth/login
 }
 ```
 
-**Respuesta (200):**
+Respuesta:
+
 ```json
 {
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token": "jwt",
   "usuario": {
     "id": 1,
     "nombre": "admin",
@@ -34,283 +37,184 @@ POST /api/auth/login
 }
 ```
 
----
+### Perfil
 
-## 👥 ROLES
-
-### 2. Listar Roles
+```http
+GET /api/auth/profile
+Authorization: Bearer <token>
 ```
-GET /api/rol
-```
-**Autenticación:** Requerida (Bearer Token)
 
-**Respuesta (200):**
+## Salud
+
+```http
+GET /api/health
+```
+
+No requiere token.
+
+## Metadatos Del Aplicativo
+
+```http
+GET /api/meta/app
+Authorization: Bearer <token>
+```
+
+Retorna:
+
+- Nombre del aplicativo.
+- Entidades permitidas.
+- Columnas por tabla.
+- Llaves primarias.
+- Totales por tabla.
+- Campos usados por la interfaz dinamica.
+
+## Registros
+
+### Listar Registros
+
+```http
+GET /api/records/{table}?page=1&pageSize=15&q=texto&sortField=id&sortDirection=ASC
+Authorization: Bearer <token>
+```
+
+Ejemplo:
+
+```http
+GET /api/records/beneficiario?page=1&pageSize=15&q=perez
+```
+
+Respuesta:
+
 ```json
-[
-  {
-    "id": 1,
-    "nombre": "Admin",
-    "descripcion": "Administrador del sistema con acceso total"
-  },
-  {
-    "id": 2,
-    "nombre": "Usuario",
-    "descripcion": "Usuario regular con acceso limitado"
+{
+  "data": [],
+  "pagination": {
+    "page": 1,
+    "pageSize": 15,
+    "total": 0,
+    "totalPages": 1
   }
-]
+}
 ```
 
----
+### Obtener Por ID
 
-## 💰 DONANTES
-
-### 3. Listar Donantes
-```
-GET /api/donante
-```
-
-### 4. Crear Donante
-```
-POST /api/donante
-```
-
-### 5. Obtener Donante por ID
-```
-GET /api/donante/{id}
-```
-
-### 6. Actualizar Donante
-```
-PUT /api/donante/{id}
-```
-
-### 7. Eliminar Donante
-```
-DELETE /api/donante/{id}
-```
-
----
-
-## 🎁 DONACIONES
-
-### 8. Listar Donaciones
-```
-GET /api/donacion
-```
-
-### 9. Crear Donación
-```
-POST /api/donacion
-```
-
-### 10. Obtener Donación por ID
-```
-GET /api/donacion/{id}
-```
-
-### 11. Actualizar Donación
-```
-PUT /api/donacion/{id}
-```
-
-### 12. Eliminar Donación
-```
-DELETE /api/donacion/{id}
-```
-
----
-
-## 👨‍👩‍👧 BENEFICIARIOS
-
-### 13. Listar Beneficiarios
-```
-GET /api/beneficiario
-```
-
-### 14. Crear Beneficiario
-```
-POST /api/beneficiario
-```
-
-### 15. Obtener Beneficiario por ID
-```
-GET /api/beneficiario/{id}
-```
-
-### 16. Actualizar Beneficiario
-```
-PUT /api/beneficiario/{id}
-```
-
-### 17. Eliminar Beneficiario
-```
-DELETE /api/beneficiario/{id}
-```
-
----
-
-## 👤 USUARIOS
-
-### 18. Listar Usuarios
-```
-GET /api/usuario
-```
-
-### 19. Crear Usuario
-```
-POST /api/usuario
-```
-
-### 20. Obtener Usuario por ID
+```http
+GET /api/records/{table}/{id}
+Authorization: Bearer <token>
 ```
-GET /api/usuario/{id}
-```
 
-### 21. Actualizar Usuario
-```
-PUT /api/usuario/{id}
-```
+Ejemplo:
 
-### 22. Eliminar Usuario
+```http
+GET /api/records/donante/1
 ```
-DELETE /api/usuario/{id}
-```
 
----
+### Escritura
 
-## 🎯 MISIONES
+La aplicacion esta en modo solo consulta.
 
-### 23. Listar Misiones
-```
-GET /api/mision
-```
+Estas rutas existen, pero responden `403`:
 
-### 24. Crear Misión
+```http
+POST /api/records/{table}
+PUT /api/records/{table}/{id}
+DELETE /api/records/{table}/{id}
 ```
-POST /api/mision
-```
 
-### 25. Obtener Misión por ID
-```
-GET /api/mision/{id}
-```
+## Busqueda Avanzada
 
-### 26. Actualizar Misión
-```
-PUT /api/mision/{id}
-```
+### Ejecutar Busqueda
 
-### 27. Eliminar Misión
+```http
+POST /api/search/execute?page=1&pageSize=20
+Authorization: Bearer <token>
 ```
-DELETE /api/mision/{id}
-```
 
----
+Body:
 
-## 🚗 VEHÍCULOS
-
-### 28. Listar Vehículos
-```
-GET /api/vehiculo
+```json
+{
+  "primaryTable": "beneficiario",
+  "filters": [
+    {
+      "field": "numero_documento",
+      "operator": "ILIKE",
+      "value": "123"
+    }
+  ],
+  "orderBy": [
+    {
+      "field": "id",
+      "direction": "ASC"
+    }
+  ]
+}
 ```
 
-### 29. Crear Vehículo
-```
-POST /api/vehiculo
-```
+Operadores soportados:
 
-### 30. Obtener Vehículo por ID
+```txt
+=, !=, <, >, <=, >=, LIKE, ILIKE, IN, BETWEEN, IS NULL, IS NOT NULL, CONTAINS, STARTS_WITH, ENDS_WITH
 ```
-GET /api/vehiculo/{id}
-```
 
-### 31. Actualizar Vehículo
-```
-PUT /api/vehiculo/{id}
-```
+### Validar Busqueda
 
-### 32. Eliminar Vehículo
+```http
+POST /api/search/validate
+Authorization: Bearer <token>
 ```
-DELETE /api/vehiculo/{id}
-```
-
----
 
-## 👨‍🚗 CONDUCTORES
-
-### 33. Listar Conductores
-```
-GET /api/conductor
-```
+Construye y valida la consulta sin ejecutarla.
 
-### 34. Crear Conductor
-```
-POST /api/conductor
-```
+### Esquema
 
-### 35. Obtener Conductor por ID
-```
-GET /api/conductor/{id}
+```http
+GET /api/search/schema
+Authorization: Bearer <token>
 ```
 
-### 36. Actualizar Conductor
-```
-PUT /api/conductor/{id}
-```
+### Tablas Permitidas
 
-### 37. Eliminar Conductor
+```http
+GET /api/search/tables
+Authorization: Bearer <token>
 ```
-DELETE /api/conductor/{id}
-```
-
----
 
-## 📚 DOCUMENTACIÓN INTERACTIVA
+### Columnas De Una Tabla
 
+```http
+GET /api/search/table/{tableName}/columns
+Authorization: Bearer <token>
 ```
-http://localhost:3000/api-docs
-```
-
-Acceso a Swagger UI con todas las rutas documentadas, ejemplos y pruebas interactivas.
-
----
-
-## 🔑 Usuarios de Prueba
-
-| Usuario | Contraseña | Rol |
-|---------|-----------|-----|
-| admin | admin123 | Admin |
-| gestor | admin123 | Usuario |
-
----
 
-## 📝 Notas Importantes
+### Relaciones De Una Tabla
 
-- **Todas las rutas excepto `/api/auth/login` requieren autenticación**
-- Los tokens JWT tienen validez de **24 horas**
-- Incluir el token en el header: `Authorization: Bearer {token}`
-- La base de datos es **PostgreSQL 12+** en `localhost:5432`
-- Base de datos: `gestion_social`
-
----
-
-## 🛠️ Comandos de Ejecución
-
-```bash
-# Instalar dependencias
-npm install
-
-# Ejecutar en desarrollo (backend + frontend)
-npm run dev
-
-# Solo backend
-npm run backend
-
-# Solo frontend
-npm run frontend
+```http
+GET /api/search/table/{tableName}/relationships
+Authorization: Bearer <token>
 ```
-
----
 
-**Versión:** 1.0.0  
-**Última actualización:** Abril 15, 2026
+## Tablas Permitidas
+
+- `beneficiario`
+- `acudiente`
+- `direccion_ubicacion`
+- `documento_soporte`
+- `donante`
+- `donacion`
+- `mision_operativa`
+- `recurso_mision`
+- `vehiculo`
+- `conductor`
+- `gasto_logistico`
+- `item_inventario`
+- `lote_inventario`
+- `entrega_encabezado`
+- `entrega_detalle`
+- `usuario`
+- `rol`
+- `permiso`
+- `usuario_rol`
+- `rol_permiso`
+- `bitacora_auditoria`

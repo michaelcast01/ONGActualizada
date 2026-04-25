@@ -3,7 +3,7 @@
     <div class="header-container">
       <div class="header-left">
         <div class="logo">
-          <span class="logo-text">Sistema <span class="logo-ong">ONG</span></span>
+          <span class="logo-text">Gestion Social <span class="logo-ong">ONG</span></span>
         </div>
       </div>
       
@@ -54,7 +54,7 @@ const logout = () => {
   localStorage.removeItem('authToken')
   localStorage.removeItem('usuario')
   menuOpen.value = false
-  router.push('/login')
+  router.push('/')
 }
 </script>
 

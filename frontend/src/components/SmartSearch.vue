@@ -398,7 +398,7 @@ async function buscar(entity) {
   const tablaMap = {
     donantes: 'donante',
     beneficiarios: 'beneficiario',
-    misiones: 'mision_proyecto',
+    misiones: 'mision_operativa',
     donaciones: 'donacion',
     vehiculos: 'vehiculo',
     conductores: 'conductor'

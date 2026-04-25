@@ -87,11 +87,12 @@ module.exports = (pool, entityConfig) => {
 
       res.json({
         app: {
-          name: 'Sistema Logistico Colombia',
-          subtitle: 'Gestion operativa de beneficiarios, inventario, misiones y seguridad.',
+          name: 'Sistema de Gestion Social ONG',
+          subtitle: 'Consulta de beneficiarios, donaciones, inventario, misiones, entregas y seguridad.',
+          readOnly: true,
           sampleLogin: {
-            username: 'usuario_0001',
-            password: 'ClaveColombia2026!1'
+            username: 'admin',
+            password: 'admin123'
           }
         },
         entities: entities.sort((a, b) => a.category.localeCompare(b.category) || a.label.localeCompare(b.label)),

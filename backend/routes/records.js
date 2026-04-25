@@ -213,111 +213,15 @@ module.exports = (pool, entityConfig) => {
   });
 
   router.post('/:table', async (req, res) => {
-    try {
-      const context = await getTableContext(req.params.table);
-      if (context.config.allowCreate === false) {
-        return res.status(403).json({ error: 'Esta tabla es solo lectura' });
-      }
-
-      const writableColumns = getWritableColumns(context.columns, context.primaryKeys, context.config, 'create');
-      const writableByName = Object.fromEntries(writableColumns.map((column) => [column.name, column]));
-      const requestedFields = Object.keys(req.body || {}).filter((field) => writableByName[field]);
-
-      let result;
-      if (requestedFields.length === 0) {
-        result = await pool.query(`INSERT INTO ${quoteIdentifier(context.tableName)} DEFAULT VALUES RETURNING *`);
-      } else {
-        const values = requestedFields.map((field) => normalizeValue(writableByName[field], req.body[field]));
-        const columnsSql = requestedFields.map((field) => quoteIdentifier(field)).join(', ');
-        const placeholders = requestedFields.map((_, index) => `$${index + 1}`).join(', ');
-
-        result = await pool.query(
-          `INSERT INTO ${quoteIdentifier(context.tableName)} (${columnsSql}) VALUES (${placeholders}) RETURNING *`,
-          values
-        );
-      }
-
-      res.status(201).json(result.rows[0]);
-    } catch (error) {
-      const status = error.message === 'Tabla no permitida' ? 404 : 400;
-      res.status(status).json({ error: error.message });
-    }
+    res.status(403).json({ error: 'La aplicacion esta en modo solo consulta' });
   });
 
   router.put('/:table/:id', async (req, res) => {
-    try {
-      const context = await getTableContext(req.params.table);
-      if (context.config.allowUpdate === false) {
-        return res.status(403).json({ error: 'Esta tabla no permite actualizacion' });
-      }
-
-      if (context.primaryKeys.length !== 1) {
-        return res.status(400).json({ error: 'La tabla seleccionada usa llave primaria compuesta' });
-      }
-
-      const writableColumns = getWritableColumns(context.columns, context.primaryKeys, context.config, 'update');
-      const writableByName = Object.fromEntries(writableColumns.map((column) => [column.name, column]));
-      const requestedFields = Object.keys(req.body || {}).filter((field) => writableByName[field]);
-
-      if (requestedFields.length === 0) {
-        return res.status(400).json({ error: 'No hay campos validos para actualizar' });
-      }
-
-      const values = requestedFields.map((field) => normalizeValue(writableByName[field], req.body[field]));
-      const setSql = requestedFields
-        .map((field, index) => `${quoteIdentifier(field)} = $${index + 1}`)
-        .join(', ');
-      const primaryKey = context.primaryKeys[0];
-      values.push(normalizeValue(context.columnsByName[primaryKey], req.params.id));
-
-      const result = await pool.query(
-        `
-          UPDATE ${quoteIdentifier(context.tableName)}
-          SET ${setSql}
-          WHERE ${quoteIdentifier(primaryKey)} = $${requestedFields.length + 1}
-          RETURNING *
-        `,
-        values
-      );
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'Registro no encontrado' });
-      }
-
-      res.json(result.rows[0]);
-    } catch (error) {
-      const status = error.message === 'Tabla no permitida' ? 404 : 400;
-      res.status(status).json({ error: error.message });
-    }
+    res.status(403).json({ error: 'La aplicacion esta en modo solo consulta' });
   });
 
   router.delete('/:table/:id', async (req, res) => {
-    try {
-      const context = await getTableContext(req.params.table);
-      if (context.config.allowDelete === false) {
-        return res.status(403).json({ error: 'Esta tabla no permite eliminacion' });
-      }
-
-      if (context.primaryKeys.length !== 1) {
-        return res.status(400).json({ error: 'La tabla seleccionada usa llave primaria compuesta' });
-      }
-
-      const primaryKey = context.primaryKeys[0];
-      const idValue = normalizeValue(context.columnsByName[primaryKey], req.params.id);
-      const result = await pool.query(
-        `DELETE FROM ${quoteIdentifier(context.tableName)} WHERE ${quoteIdentifier(primaryKey)} = $1 RETURNING *`,
-        [idValue]
-      );
-
-      if (result.rows.length === 0) {
-        return res.status(404).json({ error: 'Registro no encontrado' });
-      }
-
-      res.json({ deleted: true, record: result.rows[0] });
-    } catch (error) {
-      const status = error.message === 'Tabla no permitida' ? 404 : 400;
-      res.status(status).json({ error: error.message });
-    }
+    res.status(403).json({ error: 'La aplicacion esta en modo solo consulta' });
   });
 
   router.delete('/:table', async (req, res) => {

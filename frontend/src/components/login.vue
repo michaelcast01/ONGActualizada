@@ -6,9 +6,9 @@
       <Card variant="primary" class="login-card">
         <!-- Logo -->
         <div class="login-header">
-          <div class="logo-container">CO</div>
-          <p class="login-subtitle">Sistema Logistico Colombia</p>
-          <p class="login-hint">Si cargaste el seed Colombia: usuario_0001 / ClaveColombia2026!1</p>
+          <div class="logo-container">ONG</div>
+          <p class="login-subtitle">Sistema de Gestion Social ONG</p>
+          <p class="login-hint">Acceso inicial: admin / admin123</p>
         </div>
 
         <!-- Formulario -->
@@ -60,7 +60,7 @@
 
         <!-- Pie de página -->
         <div class="login-footer">
-          <p>© 2026 Plataforma operativa para gestion social y logistica</p>
+          <p>© 2026 Plataforma para gestion de beneficiarios, donaciones y entregas</p>
         </div>
       </Card>
     </div>

@@ -1,8 +1,8 @@
 openapi: 3.0.3
 info:
-  title: Sistema Logistico Colombia
-  description: API generica para administrar las tablas operativas del esquema Colombia.
-  version: 2.0.0
+  title: Sistema de Gestion Social ONG
+  description: API generica para consultar las tablas del sistema de beneficiarios, donaciones, inventario, misiones y entregas.
+  version: 3.0.0
 
 servers:
   - url: http://localhost:3000
@@ -21,10 +21,10 @@ components:
       properties:
         usuario:
           type: string
-          example: usuario_0001
+          example: admin
         contraseña:
           type: string
-          example: ClaveColombia2026!1
+          example: admin123
     LoginResponse:
       type: object
       properties:
@@ -43,6 +43,7 @@ components:
               type: string
     SearchRequest:
       type: object
+      required: [primaryTable]
       properties:
         primaryTable:
           type: string
@@ -54,21 +55,42 @@ components:
             properties:
               field:
                 type: string
-                example: genero
+                example: numero_documento
               operator:
                 type: string
-                example: =
+                example: ILIKE
               value:
                 oneOf:
                   - type: string
                   - type: number
                   - type: boolean
                   - type: array
+        orderBy:
+          type: array
+          items:
+            type: object
+            properties:
+              field:
+                type: string
+                example: fecha_registro
+              direction:
+                type: string
+                example: DESC
 
 security:
   - BearerAuth: []
 
 paths:
+  /api/health:
+    get:
+      security: []
+      summary: Verificar estado del backend y conexion a base de datos
+      responses:
+        '200':
+          description: Servicio activo
+        '500':
+          description: Error de conexion o servidor
+
   /api/auth/login:
     post:
       security: []
@@ -86,89 +108,105 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoginResponse'
-  /api/meta/app:
+        '401':
+          description: Credenciales invalidas
+
+  /api/auth/profile:
     get:
-      summary: Obtener configuracion del aplicativo
+      summary: Obtener perfil del usuario autenticado
       responses:
         '200':
-          description: Metadatos del frontend
+          description: Perfil del usuario autenticado
+        '401':
+          description: Token no proporcionado
+        '403':
+          description: Token invalido o expirado
+
+  /api/meta/app:
+    get:
+      summary: Obtener metadatos del aplicativo
+      description: Retorna entidades permitidas, columnas, llaves primarias y totales por tabla.
+      responses:
+        '200':
+          description: Metadatos cargados
+
   /api/records/{table}:
     get:
-      summary: Listar registros de una tabla
+      summary: Listar registros paginados de una tabla permitida
       parameters:
         - in: path
           name: table
           required: true
           schema:
             type: string
+          example: beneficiario
         - in: query
           name: page
           schema:
             type: integer
+          example: 1
         - in: query
           name: pageSize
           schema:
             type: integer
+          example: 15
         - in: query
           name: q
           schema:
             type: string
+          example: Perez
+        - in: query
+          name: sortField
+          schema:
+            type: string
+          example: id
+        - in: query
+          name: sortDirection
+          schema:
+            type: string
+            enum: [ASC, DESC]
       responses:
         '200':
           description: Registros paginados
+        '404':
+          description: Tabla no permitida
     post:
-      summary: Crear registro en una tabla permitida
+      summary: Crear registro
+      description: Actualmente deshabilitado porque la aplicacion esta en modo solo consulta.
       parameters:
         - in: path
           name: table
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
       responses:
-        '201':
-          description: Registro creado
-    delete:
-      summary: Eliminar registro en tabla con llave compuesta
-      parameters:
-        - in: path
-          name: table
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-      responses:
-        '200':
-          description: Registro eliminado
+        '403':
+          description: Modo solo consulta
+
   /api/records/{table}/{id}:
     get:
-      summary: Obtener registro por ID en tablas con llave simple
+      summary: Obtener registro por ID en tablas con llave primaria simple
       parameters:
         - in: path
           name: table
           required: true
           schema:
             type: string
+          example: beneficiario
         - in: path
           name: id
           required: true
           schema:
             type: string
+          example: '1'
       responses:
         '200':
           description: Registro encontrado
+        '404':
+          description: Registro no encontrado
     put:
-      summary: Actualizar registro por ID
+      summary: Actualizar registro
+      description: Actualmente deshabilitado porque la aplicacion esta en modo solo consulta.
       parameters:
         - in: path
           name: table
@@ -180,17 +218,12 @@ paths:
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
       responses:
-        '200':
-          description: Registro actualizado
+        '403':
+          description: Modo solo consulta
     delete:
-      summary: Eliminar registro por ID
+      summary: Eliminar registro
+      description: Actualmente deshabilitado para llaves simples porque la aplicacion esta en modo solo consulta.
       parameters:
         - in: path
           name: table
@@ -203,11 +236,23 @@ paths:
           schema:
             type: string
       responses:
-        '200':
-          description: Registro eliminado
+        '403':
+          description: Modo solo consulta
+
   /api/search/execute:
     post:
       summary: Ejecutar busqueda avanzada parametrizada
+      parameters:
+        - in: query
+          name: page
+          schema:
+            type: integer
+          example: 1
+        - in: query
+          name: pageSize
+          schema:
+            type: integer
+          example: 20
       requestBody:
         required: true
         content:
@@ -216,4 +261,20 @@ paths:
               $ref: '#/components/schemas/SearchRequest'
       responses:
         '200':
-          description: Resultados de la busqueda
+          description: Resultados de busqueda
+        '400':
+          description: Parametros invalidos
+
+  /api/search/schema:
+    get:
+      summary: Obtener esquema filtrado de tablas permitidas
+      responses:
+        '200':
+          description: Esquema disponible
+
+  /api/search/tables:
+    get:
+      summary: Obtener lista de tablas permitidas
+      responses:
+        '200':
+          description: Lista de tablas

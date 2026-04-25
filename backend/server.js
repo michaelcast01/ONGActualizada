@@ -14,7 +14,7 @@ const searchRoutes = require('./routes/search');
 
 const app = express();
 const port = Number(process.env.PORT || 3000);
-const JWT_SECRET = process.env.JWT_SECRET || 'sistema_logistico_colombia_2026';
+const JWT_SECRET = process.env.JWT_SECRET || 'sistema_gestion_social_ong_2026';
 
 app.use(cors());
 app.use(express.json({ limit: '2mb' }));
@@ -55,6 +55,7 @@ app.post('/api/auth/login', async (req, res) => {
           u.nombre_usuario,
           u.correo_electronico,
           u.hash_contrasena,
+          u.esta_activo,
           COALESCE(string_agg(DISTINCT r.nombre, ', ' ORDER BY r.nombre), 'Sin rol asignado') AS rol
         FROM usuario u
         LEFT JOIN usuario_rol ur ON ur.usuario_id = u.id
@@ -70,6 +71,10 @@ app.post('/api/auth/login', async (req, res) => {
     }
 
     const usuarioDb = result.rows[0];
+    if (!usuarioDb.esta_activo) {
+      return res.status(403).json({ error: 'Usuario inactivo' });
+    }
+
     const hashMd5 = createHash('md5').update(contraseña).digest('hex');
     const esHashBcrypt = typeof usuarioDb.hash_contrasena === 'string' && usuarioDb.hash_contrasena.startsWith('$2');
     const esValida = esHashBcrypt
@@ -113,7 +118,8 @@ app.get('/api/auth/profile', authenticateToken, async (req, res) => {
           u.id,
           u.nombre_usuario,
           u.correo_electronico,
-          u.ultima_actividad,
+          u.esta_activo,
+          u.mfa_habilitado,
           u.ultimo_acceso,
           COALESCE(string_agg(DISTINCT r.nombre, ', ' ORDER BY r.nombre), 'Sin rol asignado') AS rol
         FROM usuario u
@@ -149,7 +155,7 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Sistema Logistico Colombia - Backend activo');
+  res.send('Sistema de Gestion Social ONG - Backend activo');
 });
 
 app.listen(port, () => {

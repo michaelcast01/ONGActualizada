@@ -15,37 +15,34 @@
         <div class="welcome-content">
           <div>
             <h2>🎯 Bienvenido al Gestor de Consultas</h2>
-            <p>Gestiona donantes, beneficiarios, misiones y más de forma sencilla</p>
+            <p>Consulta donantes, beneficiarios, misiones y otros datos sin modificar informacion.</p>
           </div>
-          <Badge variant="info">Conectado</Badge>
+          <Badge variant="info">Solo lectura</Badge>
         </div>
       </Card>
 
       <!-- Controles Principales -->
-      <Card class="controls-card" title="🔧 Selecciona Operación">
+      <Card class="controls-card" title="🔧 Selecciona Consulta">
         <div class="controls-grid">
           <div class="form-group">
             <label for="accion">Acción</label>
-            <select id="accion" v-model="accion" @change="resetForm" class="form-select">
-              <option value="">-- Seleccionar --</option>
-              <option value="visualizar">👁️ Visualizar</option>
-              <option value="agregar">➕ Agregar</option>
-              <option value="modificar">✏️ Modificar</option>
-              <option value="eliminar">🗑️ Eliminar</option>
-            </select>
+            <input id="accion" value="Consulta" class="form-input" disabled />
           </div>
 
           <div class="form-group">
             <label for="tabla">Tabla</label>
             <select id="tabla" v-model="tabla" @change="resetForm" class="form-select">
               <option value="">-- Seleccionar --</option>
-              <option value="donante">Donante</option>
-              <option value="donacion">Donación</option>
               <option value="beneficiario">Beneficiario</option>
+              <option value="donante">Donante</option>
+              <option value="donacion">Donacion</option>
+              <option value="mision_operativa">Mision operativa</option>
+              <option value="entrega_encabezado">Entrega</option>
+              <option value="item_inventario">Item inventario</option>
+              <option value="lote_inventario">Lote inventario</option>
               <option value="usuario">Usuario</option>
-              <option value="vehiculo">Vehículo</option>
+              <option value="vehiculo">Vehiculo</option>
               <option value="conductor">Conductor</option>
-              <option value="mision">Misión/Proyecto</option>
             </select>
           </div>
 
@@ -57,38 +54,16 @@
             </select>
           </div>
 
-          <div v-if="(accion === 'visualizar' && modoConsulta === 'id') || accion === 'modificar' || accion === 'eliminar'" class="form-group">
+          <div v-if="modoConsulta === 'id'" class="form-group">
             <label for="id">ID</label>
             <input id="id" v-model="idBusqueda" type="text" placeholder="Ingresa el ID" class="form-input" />
           </div>
         </div>
       </Card>
 
-      <!-- Formulario de Datos -->
-      <Card v-if="accion === 'agregar' || accion === 'modificar'" class="form-card" :title="`${accion === 'agregar' ? '➕ Nuevo Registro' : '✏️ Editar Registro'}`">
-        <div class="campos-grid">
-          <div v-for="campo in camposVisibles" :key="campo.nombre" class="form-group">
-            <label :for="campo.nombre">{{ campo.label }}</label>
-            <input
-              v-if="campo.tipo === 'text' || campo.tipo === 'number' || campo.tipo === 'date'"
-              :id="campo.nombre"
-              v-model="formData[campo.nombre]"
-              :type="campo.tipo"
-              :placeholder="campo.label"
-              class="form-input"
-            />
-            <select v-else-if="campo.tipo === 'enum'" :id="campo.nombre" v-model="formData[campo.nombre]" class="form-select">
-              <option value="">-- Seleccionar --</option>
-              <option v-for="opt in campo.opciones" :key="opt" :value="opt">{{ opt }}</option>
-            </select>
-            <input v-else-if="campo.tipo === 'boolean'" :id="campo.nombre" v-model="formData[campo.nombre]" type="checkbox" class="form-checkbox" />
-          </div>
-        </div>
-      </Card>
-
       <!-- Botones de Acción -->
       <div class="buttons-group">
-        <Button v-if="accion" label="📤 Enviar" variant="primary" size="lg" :loading="loading" @click="realizarAccion" />
+        <Button label="📤 Consultar" variant="primary" size="lg" :loading="loading" @click="realizarAccion" />
         <Button label="🗑️ Limpiar" variant="ghost" size="lg" @click="resetForm" />
         <Button 
           :label="`${mostrarRespuesta ? '👁️ Ocultar' : '👁️ Mostrar'} Respuesta`" 
@@ -101,8 +76,8 @@
       </div>
 
       <!-- Mensaje de Ayuda -->
-      <div v-if="accion && !respuesta && !loading" class="help-message">
-        <p>💡 Selecciona la acción, tabla y haz clic en <strong>Enviar</strong> para ver los resultados</p>
+      <div v-if="tabla && !respuesta && !loading" class="help-message">
+        <p>💡 Selecciona la tabla y haz clic en <strong>Consultar</strong> para ver los resultados</p>
       </div>
 
       <!-- Respuesta -->
@@ -172,82 +147,16 @@ import { useToast } from '../composables/useToast'
 
 const { toasts, success, error: showError } = useToast()
 
-const accion = ref('')
+const accion = ref('visualizar')
 const tabla = ref('')
 const modoConsulta = ref('todos')
 const idBusqueda = ref('')
 const respuesta = ref(null)
 const error = ref('')
-const formData = ref({})
 const mostrarRespuesta = ref(false)
 const paginaActual = ref(1)
 const loading = ref(false)
 const itemsPorPagina = 10
-
-const camposPorTabla = {
-  donante: [
-    { nombre: 'id', label: 'ID', tipo: 'number', mostrarEnAgregar: false, mostrarEnModificar: true },
-    { nombre: 'tipo', label: 'Tipo', tipo: 'enum', opciones: ['persona', 'empresa', 'institucion'], mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'nombre_completo', label: 'Nombre Completo', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'numero_documento', label: 'Número Documento', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'correo', label: 'Correo', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true }
-  ],
-  donacion: [
-    { nombre: 'id', label: 'ID', tipo: 'number', mostrarEnAgregar: false, mostrarEnModificar: true },
-    { nombre: 'donante_id', label: 'ID Donante', tipo: 'number', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'fecha_donacion', label: 'Fecha Donación', tipo: 'date', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'tipo', label: 'Tipo', tipo: 'enum', opciones: ['efectivo', 'especie', 'servicio'], mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'valor_estimado', label: 'Valor Estimado', tipo: 'number', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'metodo_recepcion', label: 'Método Recepción', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true }
-  ],
-  beneficiario: [
-    { nombre: 'id', label: 'ID', tipo: 'number', mostrarEnAgregar: false, mostrarEnModificar: true },
-    { nombre: 'tipo_documento', label: 'Tipo Documento', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'numero_documento', label: 'Número Documento', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'primer_nombre', label: 'Primer Nombre', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'segundo_nombre', label: 'Segundo Nombre', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'primer_apellido', label: 'Primer Apellido', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'segundo_apellido', label: 'Segundo Apellido', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'genero', label: 'Género', tipo: 'enum', opciones: ['M', 'F', 'O'], mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'fecha_nacimiento', label: 'Fecha Nacimiento', tipo: 'date', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'telefono', label: 'Teléfono', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'correo', label: 'Correo', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true }
-  ],
-  usuario: [
-    { nombre: 'id', label: 'ID', tipo: 'number', mostrarEnAgregar: false, mostrarEnModificar: true },
-    { nombre: 'nombre_usuario', label: 'Nombre Usuario', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'correo_electronico', label: 'Correo', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'estado', label: 'Estado', tipo: 'enum', opciones: ['activo', 'inactivo'], mostrarEnAgregar: true, mostrarEnModificar: true }
-  ],
-  vehiculo: [
-    { nombre: 'id', label: 'ID', tipo: 'number', mostrarEnAgregar: false, mostrarEnModificar: true },
-    { nombre: 'placa', label: 'Placa', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'modelo', label: 'Modelo', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'capacidad', label: 'Capacidad', tipo: 'number', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'estado', label: 'Estado', tipo: 'enum', opciones: ['disponible', 'en_uso', 'mantenimiento'], mostrarEnAgregar: true, mostrarEnModificar: true }
-  ],
-  conductor: [
-    { nombre: 'id', label: 'ID', tipo: 'number', mostrarEnAgregar: false, mostrarEnModificar: true },
-    { nombre: 'nombre', label: 'Nombre', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'numero_licencia', label: 'Número Licencia', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'estado', label: 'Estado', tipo: 'enum', opciones: ['activo', 'inactivo'], mostrarEnAgregar: true, mostrarEnModificar: true }
-  ],
-  mision: [
-    { nombre: 'id', label: 'ID', tipo: 'number', mostrarEnAgregar: false, mostrarEnModificar: true },
-    { nombre: 'nombre', label: 'Nombre', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'descripcion', label: 'Descripción', tipo: 'text', mostrarEnAgregar: true, mostrarEnModificar: true },
-    { nombre: 'estado', label: 'Estado', tipo: 'enum', opciones: ['plazo', 'en_progreso', 'finalizado'], mostrarEnAgregar: true, mostrarEnModificar: true }
-  ]
-}
-
-const camposVisibles = computed(() => {
-  if (!tabla.value || !camposPorTabla[tabla.value]) return []
-  return camposPorTabla[tabla.value].filter(c => {
-    if (accion.value === 'agregar') return c.mostrarEnAgregar
-    if (accion.value === 'modificar') return c.mostrarEnModificar
-    return true
-  })
-})
 
 const respuestaPaginada = computed(() => {
   if (Array.isArray(respuesta.value)) {
@@ -267,8 +176,8 @@ const realizarAccion = async () => {
   error.value = ''
   respuesta.value = null
   
-  if (!accion.value || !tabla.value) {
-    showError('Debes seleccionar acción y tabla')
+  if (!tabla.value) {
+    showError('Debes seleccionar una tabla')
     return
   }
 
@@ -281,7 +190,7 @@ const realizarAccion = async () => {
       return
     }
 
-    let url = `http://localhost:3000/api/${tabla.value}`
+    let url = `http://localhost:3000/api/records/${tabla.value}`
     const opciones = {
       headers: {
         'Content-Type': 'application/json',
@@ -289,33 +198,13 @@ const realizarAccion = async () => {
       }
     }
 
-    if (accion.value === 'visualizar') {
-      opciones.method = 'GET'
-      if (modoConsulta.value === 'id') {
-        if (!idBusqueda.value) {
-          showError('Debes ingresar un ID')
-          return
-        }
-        url += `/${idBusqueda.value}`
-      }
-    } else if (accion.value === 'agregar') {
-      opciones.method = 'POST'
-      opciones.body = JSON.stringify(formData.value)
-    } else if (accion.value === 'modificar') {
+    opciones.method = 'GET'
+    if (modoConsulta.value === 'id') {
       if (!idBusqueda.value) {
         showError('Debes ingresar el ID')
         return
       }
       url += `/${idBusqueda.value}`
-      opciones.method = 'PUT'
-      opciones.body = JSON.stringify(formData.value)
-    } else if (accion.value === 'eliminar') {
-      if (!idBusqueda.value) {
-        showError('Debes ingresar el ID')
-        return
-      }
-      url += `/${idBusqueda.value}`
-      opciones.method = 'DELETE'
     }
 
     const res = await fetch(url, opciones)
@@ -330,10 +219,7 @@ const realizarAccion = async () => {
     paginaActual.value = 1
     mostrarRespuesta.value = true
 
-    if (accion.value === 'agregar') success('Registro agregado exitosamente')
-    if (accion.value === 'modificar') success('Registro modificado exitosamente')
-    if (accion.value === 'eliminar') success('Registro eliminado exitosamente')
-    if (accion.value === 'visualizar') success('Datos cargados correctamente')
+    success('Datos cargados correctamente')
   } catch (err) {
     showError(`Error: ${err.message}`)
   } finally {
@@ -342,7 +228,6 @@ const realizarAccion = async () => {
 }
 
 const resetForm = () => {
-  formData.value = {}
   idBusqueda.value = ''
   respuesta.value = null
   error.value = ''
