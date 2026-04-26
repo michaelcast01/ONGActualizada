@@ -220,19 +220,11 @@ class QueryExecutor {
   }
 
   /**
-   * Construir query COUNT eliminando LIMIT/OFFSET
+   * Construir query COUNT sobre la consulta original.
    */
   buildCountQuery(originalQuery, params) {
-    // Remover LIMIT y OFFSET pero mantener WHERE, ORDER BY, etc
-    const cleanQuery = originalQuery
-      .replace(/LIMIT\s+\d+/i, '')
-      .replace(/OFFSET\s+\d+/i, '');
-
-    // Reemplazar SELECT por SELECT COUNT(*)
-    const countQuery = cleanQuery.replace(
-      /SELECT\s+[\w\s,.*]+\s+FROM/i,
-      'SELECT COUNT(*) as total FROM'
-    );
+    const cleanQuery = originalQuery.replace(/;\s*$/, '');
+    const countQuery = `SELECT COUNT(*)::int AS total FROM (${cleanQuery}) AS count_source`;
 
     return { query: countQuery, params };
   }

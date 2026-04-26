@@ -136,7 +136,13 @@ El proyecto incluye `seed-supabase.js`, que aplica `ong.sql` y carga datos reali
 node seed-supabase.js
 ```
 
-La carga crea 1200 registros operativos distribuidos en beneficiarios, ubicaciones, acudientes, documentos, donantes, donaciones, misiones, vehiculos, conductores, inventario, lotes, entregas, detalles y gastos logisticos. Adicionalmente, el esquema crea 15 registros base de seguridad: roles, permisos, usuarios y asignaciones.
+La carga crea 1200 beneficiarios con ciudades y direcciones relacionadas, mas registros operativos de documentos, donantes, donaciones, misiones, vehiculos, conductores, inventario, lotes, entregas, detalles y gastos logisticos. Adicionalmente, el esquema crea registros base de seguridad: roles, permisos, usuarios y asignaciones.
+
+Para completar una base existente hasta 1200 beneficiarios sin recrear todo el modelo:
+
+```bash
+node add-beneficiarios-1200.js
+```
 
 Advertencia: el seeder recrea las tablas con `DROP TABLE ... CASCADE`, por lo que reemplaza los datos existentes del modelo.
 

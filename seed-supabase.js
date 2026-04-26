@@ -2,11 +2,9 @@ const fs = require('fs');
 const path = require('path');
 const pool = require('./backend/db');
 
-const TARGET_RECORDS = 1200;
-
 const counts = {
-  beneficiario: 220,
-  direccion_ubicacion: 220,
+  beneficiario: 1200,
+  direccion_ubicacion: 1200,
   acudiente: 50,
   documento_soporte: 90,
   donante: 50,
@@ -21,6 +19,8 @@ const counts = {
   entrega_detalle: 170,
   gasto_logistico: 20
 };
+
+const TARGET_RECORDS = Object.values(counts).reduce((sum, value) => sum + value, 0);
 
 const firstNames = [
   'Santiago', 'Valentina', 'Mateo', 'Isabella', 'Sebastian', 'Camila', 'Nicolas', 'Sofia',
@@ -51,6 +51,19 @@ const municipios = [
   { dep: '25', mun: '25754', name: 'Soacha' },
   { dep: '50', mun: '50001', name: 'Villavicencio' },
   { dep: '76', mun: '76001', name: 'Cali' }
+];
+
+const beneficiaryCities = [
+  'Bogota, D.C.',
+  'Soacha',
+  'Chia',
+  'Medellin',
+  'Envigado',
+  'Cali',
+  'Palmira',
+  'Barranquilla',
+  'Bucaramanga',
+  'Cartagena'
 ];
 
 const items = [
@@ -130,9 +143,9 @@ async function seed() {
         client,
         `INSERT INTO beneficiario (
           tipo_documento, numero_documento, primer_nombre, apellidos, fecha_nacimiento, edad_calculada,
-          genero, telefono_principal, correo, es_victima_conflicto, tiene_discapacidad, grupo_sisben,
+          genero, telefono_principal, correo, ciudad, es_victima_conflicto, tiene_discapacidad, grupo_sisben,
           pertenencia_etnica, consentimiento_datos, fecha_registro
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15) RETURNING id`,
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING id`,
         [
           type,
           documentNumber(i, type),
@@ -143,6 +156,7 @@ async function seed() {
           i % 2 === 0 ? 'Femenino' : 'Masculino',
           `3${10 + (i % 9)}${String(2000000 + i * 91).slice(0, 7)}`,
           `${emailName}@correo.local`,
+          pick(beneficiaryCities, i),
           i % 4 === 0,
           i % 11 === 0,
           pick(['A1', 'A2', 'A3', 'B1', 'B2', 'C1'], i),

@@ -166,6 +166,7 @@ CREATE TABLE beneficiario (
     genero VARCHAR(30),
     telefono_principal VARCHAR(30),
     correo VARCHAR(150),
+    ciudad VARCHAR(100) NOT NULL,
     es_victima_conflicto BOOLEAN NOT NULL DEFAULT false,
     tiene_discapacidad BOOLEAN NOT NULL DEFAULT false,
     grupo_sisben VARCHAR(50),
@@ -174,7 +175,9 @@ CREATE TABLE beneficiario (
     fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT uq_beneficiario_documento UNIQUE (tipo_documento, numero_documento),
     CONSTRAINT ck_beneficiario_tipo_documento
-        CHECK (tipo_documento IN ('CC', 'TI', 'PPT', 'RC'))
+        CHECK (tipo_documento IN ('CC', 'TI', 'PPT', 'RC')),
+    CONSTRAINT ck_beneficiario_ciudad
+        CHECK (ciudad IN ('Bogota, D.C.', 'Soacha', 'Chia', 'Medellin', 'Envigado', 'Cali', 'Palmira', 'Barranquilla', 'Bucaramanga', 'Cartagena'))
 );
 
 CREATE TABLE acudiente (
