@@ -218,3 +218,22 @@ Authorization: Bearer <token>
 - `usuario_rol`
 - `rol_permiso`
 - `bitacora_auditoria`
+
+## Auditoria Automatica
+
+El backend registra acciones en `bitacora_auditoria` sin intervencion manual.
+
+Acciones auditadas:
+
+- `LOGIN` en `POST /api/auth/login` cuando el acceso es exitoso.
+- `CONSULTAR` en `GET /api/records/{table}`.
+- `CONSULTAR` en `GET /api/records/{table}/{id}`.
+- `CONSULTAR` en `POST /api/search/execute`.
+- `ELIMINAR` en eliminaciones por llave compuesta.
+
+La bitacora puede consultarse como cualquier entidad permitida:
+
+```http
+GET /api/records/bitacora_auditoria?page=1&pageSize=15&sortField=id&sortDirection=DESC
+Authorization: Bearer <token>
+```

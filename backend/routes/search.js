@@ -12,6 +12,7 @@ const express = require('express');
 const SchemaManager = require('../services/SchemaManager');
 const DynamicQueryBuilder = require('../services/DynamicQueryBuilder');
 const QueryExecutor = require('../services/QueryExecutor');
+const { logAudit } = require('../services/auditLogger');
 
 module.exports = (pool, entityConfig) => {
   const router = express.Router();
@@ -117,6 +118,21 @@ module.exports = (pool, entityConfig) => {
         page,
         pageSize
       );
+
+      if (searchParams.primaryTable !== 'bitacora_auditoria') {
+        await logAudit(pool, req, {
+          accion: 'CONSULTAR',
+          nombreTabla: searchParams.primaryTable,
+          valorNuevo: {
+            tipo: 'BUSQUEDA_AVANZADA',
+            filters: searchParams.filters || [],
+            orderBy: searchParams.orderBy || [],
+            page,
+            pageSize,
+            total: result.pagination.total
+          }
+        });
+      }
 
       res.json({
         success: true,

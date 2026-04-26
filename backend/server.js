@@ -11,6 +11,7 @@ const entityConfig = require('./config/entities');
 const metaRoutes = require('./routes/meta');
 const recordsRoutes = require('./routes/records');
 const searchRoutes = require('./routes/search');
+const { logAudit } = require('./services/auditLogger');
 const legacyRoutes = require('./routes/legacy');
 
 const app = express();
@@ -87,6 +88,18 @@ app.post('/api/auth/login', async (req, res) => {
     if (!esValida) {
       return res.status(401).json({ error: 'Usuario o contraseña invalidos' });
     }
+
+    await logAudit(pool, req, {
+      usuarioId: usuarioDb.id,
+      accion: 'LOGIN',
+      nombreTabla: 'usuario',
+      idRegistroAfectado: usuarioDb.id,
+      valorNuevo: {
+        usuario: usuarioDb.nombre_usuario,
+        correo: usuarioDb.correo_electronico,
+        rol: usuarioDb.rol
+      }
+    });
 
     const token = jwt.sign(
       {

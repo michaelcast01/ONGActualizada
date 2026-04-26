@@ -154,6 +154,18 @@ Advertencia: el seeder recrea las tablas con `DROP TABLE ... CASCADE`, por lo qu
 4. El operador consulta registros mediante busqueda rapida o filtros avanzados.
 5. Las consultas se ejecutan con `/api/records/:table` o `/api/search/execute`.
 
+## Bitacora De Auditoria
+
+La tabla `bitacora_auditoria` registra automaticamente acciones importantes del backend:
+
+- `LOGIN`: cada inicio de sesion exitoso.
+- `CONSULTAR`: listados desde `/api/records/:table`.
+- `CONSULTAR`: detalles desde `/api/records/:table/:id`.
+- `CONSULTAR`: busquedas avanzadas desde `/api/search/execute`.
+- `ELIMINAR`: eliminaciones por llave compuesta si se usa la ruta correspondiente.
+
+Cada registro guarda usuario, accion, tabla afectada, id del registro si aplica, datos de contexto en JSON, fecha/hora automatica e IP de origen.
+
 ## Verificacion Rapida
 
 ```bash

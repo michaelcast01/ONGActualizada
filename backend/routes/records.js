@@ -1,5 +1,6 @@
 const express = require('express');
 const SchemaManager = require('../services/SchemaManager');
+const { logAudit } = require('../services/auditLogger');
 
 const router = express.Router();
 
@@ -182,6 +183,22 @@ module.exports = (pool, entityConfig) => {
       const dataResult = await pool.query(dataQuery, dataParams);
       const total = countResult.rows[0]?.total || 0;
 
+      if (context.tableName !== 'bitacora_auditoria') {
+        await logAudit(pool, req, {
+          accion: 'CONSULTAR',
+          nombreTabla: context.tableName,
+          valorNuevo: {
+            tipo: 'LISTADO',
+            page,
+            pageSize,
+            total,
+            q: searchTerm || null,
+            sortField,
+            sortDirection
+          }
+        });
+      }
+
       res.json({
         data: dataResult.rows,
         pagination: {
@@ -213,6 +230,18 @@ module.exports = (pool, entityConfig) => {
 
       if (result.rows.length === 0) {
         return res.status(404).json({ error: 'Registro no encontrado' });
+      }
+
+      if (context.tableName !== 'bitacora_auditoria') {
+        await logAudit(pool, req, {
+          accion: 'CONSULTAR',
+          nombreTabla: context.tableName,
+          idRegistroAfectado: idValue,
+          valorNuevo: {
+            tipo: 'DETALLE',
+            primaryKey
+          }
+        });
       }
 
       res.json(result.rows[0]);
@@ -254,6 +283,13 @@ module.exports = (pool, entityConfig) => {
       if (result.rows.length === 0) {
         return res.status(404).json({ error: 'Registro no encontrado' });
       }
+
+      await logAudit(pool, req, {
+        accion: 'ELIMINAR',
+        nombreTabla: context.tableName,
+        idRegistroAfectado: context.primaryKeys.map((key) => result.rows[0][key]).join('|'),
+        valorAnterior: result.rows[0]
+      });
 
       res.json({ deleted: true, record: result.rows[0] });
     } catch (error) {

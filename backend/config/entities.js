@@ -4,8 +4,8 @@ const entities = {
     category: 'Beneficiarios',
     description: 'Personas registradas para recibir ayudas sociales.',
     titleField: 'primer_nombre',
-    listFields: ['id', 'tipo_documento', 'numero_documento', 'primer_nombre', 'apellidos', 'ciudad', 'grupo_sisben', 'fecha_registro'],
-    searchFields: ['tipo_documento', 'numero_documento', 'primer_nombre', 'apellidos', 'correo', 'ciudad', 'grupo_sisben', 'pertenencia_etnica']
+    listFields: ['id', 'tipo_documento', 'numero_documento', 'primer_nombre', 'apellidos', 'ciudad', 'telefono_principal', 'grupo_sisben', 'fecha_registro'],
+    searchFields: ['tipo_documento', 'numero_documento', 'primer_nombre', 'apellidos', 'telefono_principal', 'correo', 'ciudad', 'grupo_sisben', 'pertenencia_etnica']
   },
   acudiente: {
     label: 'Acudientes',
