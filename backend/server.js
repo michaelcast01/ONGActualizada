@@ -11,6 +11,7 @@ const entityConfig = require('./config/entities');
 const metaRoutes = require('./routes/meta');
 const recordsRoutes = require('./routes/records');
 const searchRoutes = require('./routes/search');
+const legacyRoutes = require('./routes/legacy');
 
 const app = express();
 const port = Number(process.env.PORT || 3001);
@@ -144,6 +145,7 @@ app.get('/api/auth/profile', authenticateToken, async (req, res) => {
 });
 
 app.use('/api/meta', authenticateToken, metaRoutes(pool, entityConfig));
+app.use('/api', legacyRoutes(pool, authenticateToken));
 app.use('/api/records', authenticateToken, recordsRoutes(pool, entityConfig));
 app.use('/api/search', authenticateToken, searchRoutes(pool, entityConfig));
 

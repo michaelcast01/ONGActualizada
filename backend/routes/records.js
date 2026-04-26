@@ -67,6 +67,21 @@ function normalizeValue(column, value) {
   }
 }
 
+function buildTextSearchClause(fields, searchTerm, params) {
+  const expression = `concat_ws(' ', ${fields.map((field) => quoteIdentifier(field)).join(', ')})`;
+  const tokens = searchTerm.split(/\s+/).filter(Boolean);
+
+  params.push(`%${searchTerm}%`);
+  const fullSearchParam = params.length;
+
+  const tokenClauses = tokens.map((token) => {
+    params.push(`%${token}%`);
+    return `${expression} ILIKE $${params.length}`;
+  });
+
+  return `(${expression} ILIKE $${fullSearchParam} OR (${tokenClauses.join(' AND ')}))`;
+}
+
 function getWritableColumns(columns, primaryKeys, config, mode) {
   const readOnly = (mode === 'create' && config.allowCreate === false) || (mode === 'update' && config.allowUpdate === false);
   if (readOnly) {
@@ -148,12 +163,7 @@ module.exports = (pool, entityConfig) => {
       const params = [];
 
       if (searchTerm && searchFields.length > 0) {
-        const searchClause = searchFields.map((field) => {
-          params.push(`%${searchTerm}%`);
-          return `${quoteIdentifier(field)} ILIKE $${params.length}`;
-        });
-
-        whereClauses.push(`(${searchClause.join(' OR ')})`);
+        whereClauses.push(buildTextSearchClause(searchFields, searchTerm, params));
       }
 
       const whereSql = whereClauses.length > 0 ? ` WHERE ${whereClauses.join(' AND ')}` : '';

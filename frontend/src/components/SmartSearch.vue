@@ -233,7 +233,7 @@
       <div v-if="currentEntity === 'beneficiarios'" class="results-cards">
         <div v-for="beneficiario in resultados" :key="beneficiario.id" class="card">
           <div class="card-header" @click="toggleCard(beneficiario.id)">
-            <h3>{{ beneficiario.primer_nombre }} {{ beneficiario.apellido }}</h3>
+            <h3>{{ beneficiario.primer_nombre }} {{ beneficiario.apellidos }}</h3>
             <span class="badge" :class="{ vulnerable: beneficiario.es_victima_conflicto || beneficiario.tiene_discapacidad }">
               {{ beneficiario.es_victima_conflicto ? '⚠️ Víctima' : '✓ Registrado' }}
             </span>
@@ -407,6 +407,11 @@ async function buscar(entity) {
   const tabla = tablaMap[entity]
   const filtrosActuales = filters[entity]
 
+  if (entity === 'beneficiarios' && filtrosActuales.nombre) {
+    await buscarBeneficiariosPorTexto(filtrosActuales)
+    return
+  }
+
   // Construir parámetros de búsqueda
   const searchParams = {
     primaryTable: tabla,
@@ -421,6 +426,36 @@ async function buscar(entity) {
     })
 
     resultados.value = response.data.data || []
+    cargado.value = true
+  } catch (err) {
+    error.value = err.response?.data?.error || err.message
+    cargado.value = true
+  } finally {
+    cargando.value = false
+  }
+}
+
+async function buscarBeneficiariosPorTexto(filtros) {
+  try {
+    const token = localStorage.getItem('authToken')
+    const response = await axios.get('/api/records/beneficiario', {
+      headers: { Authorization: `Bearer ${token}` },
+      params: {
+        page: 1,
+        pageSize: 100,
+        q: filtros.nombre,
+        sortField: 'id',
+        sortDirection: 'ASC'
+      }
+    })
+
+    resultados.value = (response.data.data || []).filter((beneficiario) => {
+      if (filtros.documento && beneficiario.numero_documento !== filtros.documento) return false
+      if (filtros.tipo_documento && beneficiario.tipo_documento !== filtros.tipo_documento) return false
+      if (filtros.victima_conflicto && !beneficiario.es_victima_conflicto) return false
+      if (filtros.discapacidad && !beneficiario.tiene_discapacidad) return false
+      return true
+    })
     cargado.value = true
   } catch (err) {
     error.value = err.response?.data?.error || err.message
