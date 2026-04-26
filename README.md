@@ -123,9 +123,9 @@ npm run dev
 Servicios esperados:
 
 ```txt
-Backend: http://localhost:3000
-Frontend: http://localhost:5173
-Swagger: http://localhost:3000/api-docs
+Backend: http://localhost:3001
+Frontend: http://localhost:5174
+Swagger: http://localhost:3001/api-docs
 ```
 
 ## Cargar Datos En Supabase

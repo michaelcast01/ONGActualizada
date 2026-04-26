@@ -11,9 +11,10 @@ const entityConfig = require('./config/entities');
 const metaRoutes = require('./routes/meta');
 const recordsRoutes = require('./routes/records');
 const searchRoutes = require('./routes/search');
+const legacyRoutes = require('./routes/legacy');
 
 const app = express();
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || 3001);
 const JWT_SECRET = process.env.JWT_SECRET || 'sistema_gestion_social_ong_2026';
 
 app.use(cors());
@@ -42,7 +43,9 @@ const authenticateToken = (req, res, next) => {
 
 app.post('/api/auth/login', async (req, res) => {
   try {
-    const { usuario, contraseña } = req.body || {};
+    const body = req.body || {};
+    const { usuario } = body;
+    const contraseña = body.contraseña ?? body.contrasena;
 
     if (!usuario || !contraseña) {
       return res.status(400).json({ error: 'Usuario y contraseña requeridos' });
@@ -142,6 +145,7 @@ app.get('/api/auth/profile', authenticateToken, async (req, res) => {
 });
 
 app.use('/api/meta', authenticateToken, metaRoutes(pool, entityConfig));
+app.use('/api', legacyRoutes(pool, authenticateToken));
 app.use('/api/records', authenticateToken, recordsRoutes(pool, entityConfig));
 app.use('/api/search', authenticateToken, searchRoutes(pool, entityConfig));
 
@@ -155,7 +159,14 @@ app.get('/api/health', async (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Sistema de Gestion Social ONG - Backend activo');
+  res.json({
+    nombre: 'Sistema de Ayudas Sociales API',
+    version: '1.0.0'
+  });
+});
+
+app.use((req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
 app.listen(port, () => {

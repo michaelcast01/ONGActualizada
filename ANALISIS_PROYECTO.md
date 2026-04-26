@@ -55,7 +55,7 @@
 ───────────────────────────
 
 FLUJO COMPLETO:
-1. Usuario accede a http://localhost:5173
+1. Usuario accede a http://localhost:5174
 2. Ve pantalla LOGIN (login.vue)
 3. Ingresa: usuario=michael, password=MICHAEL123
 4. Presiona "Ingresar"
@@ -152,7 +152,7 @@ FLUJO COMPLETO:
    └─ npm run dev
 
 5. PROBAR APLICACIÓN
-   ├─ URL: http://localhost:5173
+   ├─ URL: http://localhost:5174
    ├─ Login: michael / MICHAEL123
    ├─ Hacer consultas en ApiTester
 

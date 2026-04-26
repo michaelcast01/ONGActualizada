@@ -98,7 +98,7 @@ El proyecto ahora está **COMPLETAMENTE ALINEADO** entre:
 - **Tecnología**: Vue 3 + JavaScript
 - **Enrutador**: Vue Router 4.5.1
 - **HTTP**: Fetch API nativo
-- **Puerto**: 5173 (desarrollo)
+- **Puerto**: 5174 (desarrollo)
 
 ### Componentes
 
@@ -107,7 +107,7 @@ El proyecto ahora está **COMPLETAMENTE ALINEADO** entre:
 Ruta: /
 Función: Autenticación de usuarios
 Campos: usuario, contraseña
-POST: http://localhost:3000/api/auth/login
+POST: http://localhost:3001/api/auth/login
 Guarda: token, usuario en localStorage
 Redirección: /apitester
 Título: "SISTEMA DE INFORMACIÓN ONG"
@@ -267,9 +267,9 @@ npm run dev
 
 ### 3. Acceder a la Aplicación
 ```
-Frontend: http://localhost:5173
-Backend API: http://localhost:3000
-Swagger Docs: http://localhost:3000/api-docs
+Frontend: http://localhost:5174
+Backend API: http://localhost:3001
+Swagger Docs: http://localhost:3001/api-docs
 ```
 
 ### 4. Pruebas

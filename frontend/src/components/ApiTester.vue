@@ -190,7 +190,7 @@ const realizarAccion = async () => {
       return
     }
 
-    let url = `http://localhost:3000/api/records/${tabla.value}`
+    let url = `http://localhost:3001/api/records/${tabla.value}`
     const opciones = {
       headers: {
         'Content-Type': 'application/json',

@@ -66,7 +66,7 @@ En `frontend/src/App.vue`, agregar navegación:
 cd SISTEMA_DE_INF_ONG
 npm start
 
-# Acceder a http://localhost:5173 y navegar a "Búsqueda Inteligente"
+# Acceder a http://localhost:5174 y navegar a "Búsqueda Inteligente"
 ```
 
 ---
@@ -75,7 +75,7 @@ npm start
 
 ## Ejemplo 1: Búsqueda simple
 ```bash
-curl -X POST http://localhost:3000/api/search/execute \\
+curl -X POST http://localhost:3001/api/search/execute \\
   -H "Authorization: Bearer YOUR_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -87,7 +87,7 @@ curl -X POST http://localhost:3000/api/search/execute \\
 
 ## Ejemplo 2: Búsqueda con BETWEEN
 ```bash
-curl -X POST http://localhost:3000/api/search/execute \\
+curl -X POST http://localhost:3001/api/search/execute \\
   -H "Authorization: Bearer YOUR_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -103,7 +103,7 @@ curl -X POST http://localhost:3000/api/search/execute \\
 
 ## Ejemplo 3: Búsqueda con múltiples filtros
 ```bash
-curl -X POST http://localhost:3000/api/search/execute \\
+curl -X POST http://localhost:3001/api/search/execute \\
   -H "Authorization: Bearer YOUR_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{
@@ -127,7 +127,7 @@ curl -X POST http://localhost:3000/api/search/execute \\
 El sistema cachea el schema por 1 hora. Para invalidar:
 
 ```bash
-curl -X DELETE http://localhost:3000/api/search/cache \\
+curl -X DELETE http://localhost:3001/api/search/cache \\
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -135,7 +135,7 @@ curl -X DELETE http://localhost:3000/api/search/cache \\
 Para validar query sin ejecutar:
 
 ```bash
-curl -X POST http://localhost:3000/api/search/validate \\
+curl -X POST http://localhost:3001/api/search/validate \\
   -H "Authorization: Bearer YOUR_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{ "primaryTable": "beneficiario", ... }'
@@ -145,7 +145,7 @@ curl -X POST http://localhost:3000/api/search/validate \\
 Para analizar performance:
 
 ```bash
-curl -X POST http://localhost:3000/api/search/explain \\
+curl -X POST http://localhost:3001/api/search/explain \\
   -H "Authorization: Bearer YOUR_TOKEN" \\
   -H "Content-Type: application/json" \\
   -d '{ "primaryTable": "beneficiario", ... }'
@@ -155,7 +155,7 @@ curl -X POST http://localhost:3000/api/search/explain \\
 Ver estadísticas de ejecución:
 
 ```bash
-curl -X GET http://localhost:3000/api/search/stats \\
+curl -X GET http://localhost:3001/api/search/stats \\
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 

@@ -197,7 +197,7 @@ import Button from './Button.vue'
 import Badge from './Badge.vue'
 import { useToast } from '../composables/useToast'
 
-const API_BASE = 'http://localhost:3000/api'
+const API_BASE = 'http://localhost:3001/api'
 
 const router = useRouter()
 const { toasts, success, error: notifyError } = useToast()
