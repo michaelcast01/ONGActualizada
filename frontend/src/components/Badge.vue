@@ -24,39 +24,46 @@ defineProps({
   display: inline-flex;
   align-items: center;
   font-weight: var(--font-weight-semibold);
-  border-radius: var(--border-radius-full);
+  border-radius: 999px;
   white-space: nowrap;
+  border: 1px solid transparent;
 }
 
 /* Variantes */
 .badge-primary {
-  background-color: #e3f2fd;
+  background-color: #eaf3ff;
   color: var(--color-primary);
+  border-color: #c7ddff;
 }
 
 .badge-secondary {
-  background-color: #ffebee;
+  background-color: #fff1ed;
   color: var(--color-secondary);
+  border-color: #ffd2c8;
 }
 
 .badge-success {
-  background-color: #e8f5e9;
+  background-color: #e8f7ef;
   color: #2e7d32;
+  border-color: #c7ebd4;
 }
 
 .badge-error {
   background-color: #ffebee;
   color: var(--color-error);
+  border-color: #ffcdd2;
 }
 
 .badge-warning {
-  background-color: #fff3e0;
+  background-color: #fff7db;
   color: #e65100;
+  border-color: #ffe2a6;
 }
 
 .badge-info {
-  background-color: #e3f2fd;
-  color: var(--color-info);
+  background-color: #ecfeff;
+  color: #0e7490;
+  border-color: #b6edf2;
 }
 
 /* Tamaños */

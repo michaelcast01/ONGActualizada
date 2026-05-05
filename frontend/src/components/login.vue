@@ -1,20 +1,35 @@
 <template>
   <div class="login-page">
     <div class="login-background"></div>
-    
-    <div class="login-container">
+
+    <section class="login-shell">
+      <div class="login-feature">
+        <span class="feature-kicker">Plataforma operativa ONG</span>
+        <h1>Gestion social con datos claros y accion rapida</h1>
+        <p>Consulta beneficiarios, donaciones, entregas y proyectos desde un centro de informacion preparado para trabajo diario.</p>
+
+        <div class="feature-grid">
+          <span>Beneficiarios</span>
+          <span>Donaciones</span>
+          <span>Entregas</span>
+          <span>Proyectos</span>
+        </div>
+      </div>
+
+      <div class="login-container">
       <Card variant="primary" class="login-card">
-        <!-- Logo -->
         <div class="login-header">
-          <div class="logo-container">ONG</div>
+          <div class="logo-container">
+            <span>ONG</span>
+          </div>
+          <h2>Ingreso seguro</h2>
           <p class="login-subtitle">Sistema de Gestion Social ONG</p>
           <p class="login-hint">Acceso inicial: admin / admin123</p>
         </div>
 
-        <!-- Formulario -->
         <form @submit.prevent="login" class="login-form">
           <div class="form-group">
-            <label for="username">📧 Usuario</label>
+            <label for="username">Usuario</label>
             <input
               id="username"
               v-model="username"
@@ -27,7 +42,7 @@
           </div>
 
           <div class="form-group">
-            <label for="password">🔐 Contraseña</label>
+            <label for="password">Contrasena</label>
             <input
               id="password"
               v-model="password"
@@ -39,14 +54,12 @@
             />
           </div>
 
-          <!-- Toast de error -->
           <transition name="fade">
             <div v-if="error" class="error-box">
-              <span>⚠️ {{ error }}</span>
+              <span>{{ error }}</span>
             </div>
           </transition>
 
-          <!-- Botón de login -->
           <Button
             :label="loading ? 'Iniciando sesión...' : 'Ingresar'"
             variant="primary"
@@ -63,7 +76,8 @@
           <p>© 2026 Plataforma para gestion de beneficiarios, donaciones y entregas</p>
         </div>
       </Card>
-    </div>
+      </div>
+    </section>
   </div>
 </template>
 
@@ -133,10 +147,14 @@ const login = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(135deg, #003478 0%, #001d45 48%, #b42318 100%);
+  background-size: 42px 42px, 42px 42px, auto;
   position: relative;
   overflow: hidden;
-  padding: var(--spacing-md);
+  padding: 2rem;
 }
 
 .login-background {
@@ -145,36 +163,110 @@ const login = async () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></pattern></defs><rect width="1200" height="600" fill="url(%23grid)"/></svg>');
-  opacity: 0.5;
+  background:
+    linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.12) 48%, transparent 49%),
+    linear-gradient(35deg, transparent 0%, rgba(255, 255, 255, 0.08) 62%, transparent 63%);
+  opacity: 0.85;
   z-index: 0;
+}
+
+.login-shell {
+  position: relative;
+  z-index: 1;
+  width: min(1120px, 100%);
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 420px);
+  gap: 2rem;
+  align-items: center;
+}
+
+.login-feature {
+  color: white;
+  max-width: 650px;
+}
+
+.feature-kicker {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 0.78rem;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.login-feature h1 {
+  color: white;
+  font-size: clamp(2.7rem, 5vw, 5.4rem);
+  line-height: 0.95;
+  margin-bottom: 1.2rem;
+}
+
+.login-feature p {
+  max-width: 560px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 1.08rem;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.feature-grid span {
+  min-height: 5.4rem;
+  display: flex;
+  align-items: flex-end;
+  padding: 0.85rem;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.11);
+  color: white;
+  font-weight: 800;
+  backdrop-filter: blur(12px);
 }
 
 .login-container {
   position: relative;
-  z-index: 1;
   width: 100%;
-  max-width: 420px;
 }
 
 .login-card {
   border: none !important;
-  box-shadow: 0 20px 60px rgba(0, 20, 69, 0.3) !important;
-  border-radius: 16px !important;
+  box-shadow: 0 28px 80px rgba(0, 20, 69, 0.34) !important;
+  border-radius: 8px !important;
 }
 
 .login-header {
-  text-align: center;
+  text-align: left;
   margin-bottom: var(--spacing-2xl);
   padding-bottom: var(--spacing-xl);
-  border-bottom: 2px solid var(--color-gray-200);
+  border-bottom: 1px solid rgba(0, 52, 120, 0.1);
 }
 
 .logo-container {
-  font-size: 3.5rem;
-  margin-bottom: var(--spacing-md);
-  display: inline-block;
-  animation: pulse 2s ease-in-out infinite;
+  width: 4.4rem;
+  height: 4.4rem;
+  display: grid;
+  place-items: center;
+  margin-bottom: var(--spacing-lg);
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+  color: white;
+  box-shadow: 0 18px 35px rgba(0, 52, 120, 0.24);
+}
+
+.logo-container span {
+  font-weight: 900;
+  letter-spacing: 0.06em;
+}
+
+.login-header h2 {
+  margin-bottom: 0.35rem;
+  color: var(--color-primary-dark);
+  font-size: 1.8rem;
 }
 
 @keyframes pulse {
@@ -183,7 +275,7 @@ const login = async () => {
 }
 
 .login-subtitle {
-  color: var(--color-primary);
+  color: #43536b;
   font-size: var(--font-size-lg);
   font-weight: var(--font-weight-semibold);
   margin: 0;
@@ -193,7 +285,7 @@ const login = async () => {
 .login-hint {
   margin-top: var(--spacing-sm);
   font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
+  color: #6b778c;
 }
 
 .login-form {
@@ -219,9 +311,9 @@ const login = async () => {
 
 .form-input {
   padding: var(--spacing-md) var(--spacing-lg);
-  border: 2px solid var(--color-gray-300);
-  border-radius: var(--border-radius-lg);
-  background-color: var(--color-white);
+  border: 1px solid #cfd9e8;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
   color: var(--color-gray-900);
   font-size: var(--font-size-md);
   transition: all var(--transition-base);
@@ -234,7 +326,7 @@ const login = async () => {
   border-color: var(--color-primary);
   box-shadow: 0 0 0 4px rgba(0, 52, 120, 0.15);
   background-color: var(--color-white);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .form-input:disabled {
@@ -249,8 +341,9 @@ const login = async () => {
 .error-box {
   padding: var(--spacing-md);
   background-color: #ffebee;
+  border: 1px solid #ffcdd2;
   border-left: 4px solid var(--color-error);
-  border-radius: var(--border-radius-md);
+  border-radius: 8px;
   color: var(--color-error);
   font-weight: var(--font-weight-medium);
   animation: slideDown 0.3s ease;
@@ -286,7 +379,7 @@ const login = async () => {
   text-align: center;
   margin-top: var(--spacing-2xl);
   padding-top: var(--spacing-lg);
-  border-top: 1px solid var(--color-gray-200);
+  border-top: 1px solid rgba(0, 52, 120, 0.08);
   color: var(--color-gray-500);
   font-size: var(--font-size-xs);
   letter-spacing: 0.3px;
@@ -312,6 +405,14 @@ const login = async () => {
     padding: var(--spacing-md);
   }
 
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .login-feature {
+    display: none;
+  }
+
   .login-container {
     max-width: 100%;
   }
@@ -322,6 +423,17 @@ const login = async () => {
 
   .login-logo {
     font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 980px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+    max-width: 520px;
+  }
+
+  .login-feature {
+    display: none;
   }
 }
 

@@ -49,69 +49,67 @@ defineEmits(['click'])
   font-family: var(--font-family);
   font-weight: var(--font-weight-semibold);
   border: none;
-  border-radius: var(--border-radius-lg);
+  border-radius: 8px;
   cursor: pointer;
   transition: all var(--transition-base);
   white-space: nowrap;
+  min-height: 2.75rem;
 }
 
 /* Variantes */
 .btn-primary {
-  background-color: var(--color-primary);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
   color: var(--color-white);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 12px 26px rgba(0, 52, 120, 0.22);
 }
 
 .btn-primary:hover:not(.btn-disabled) {
-  background-color: var(--color-primary-dark);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(0, 52, 120, 0.28);
+  transform: translateY(-2px);
 }
 
 .btn-secondary {
-  background-color: var(--color-secondary);
+  background: linear-gradient(135deg, var(--color-secondary), var(--color-secondary-dark));
   color: var(--color-white);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 12px 26px rgba(233, 75, 60, 0.22);
 }
 
 .btn-secondary:hover:not(.btn-disabled) {
-  background-color: var(--color-secondary-dark);
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(233, 75, 60, 0.28);
+  transform: translateY(-2px);
 }
 
 .btn-success {
-  background-color: var(--color-success);
+  background: linear-gradient(135deg, #16a34a, #047857);
   color: var(--color-white);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 12px 26px rgba(22, 163, 74, 0.22);
 }
 
 .btn-success:hover:not(.btn-disabled) {
-  background-color: #45a049;
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(22, 163, 74, 0.28);
+  transform: translateY(-2px);
 }
 
 .btn-error {
-  background-color: var(--color-error);
+  background: linear-gradient(135deg, var(--color-error), #991b1b);
   color: var(--color-white);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 12px 26px rgba(211, 47, 47, 0.22);
 }
 
 .btn-error:hover:not(.btn-disabled) {
-  background-color: #b71c1c;
-  box-shadow: var(--shadow-lg);
-  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(211, 47, 47, 0.28);
+  transform: translateY(-2px);
 }
 
 .btn-ghost {
-  background-color: transparent;
+  background-color: #ffffff;
   color: var(--color-primary);
-  border: 2px solid var(--color-primary);
+  border: 1px solid rgba(0, 52, 120, 0.18);
 }
 
 .btn-ghost:hover:not(.btn-disabled) {
-  background-color: var(--color-gray-100);
+  background-color: #f1f7ff;
+  transform: translateY(-1px);
 }
 
 /* Tamaños */

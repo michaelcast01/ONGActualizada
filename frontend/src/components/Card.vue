@@ -32,44 +32,47 @@ defineProps({
 
 <style scoped>
 .card {
-  background-color: var(--color-white);
-  border-radius: var(--border-radius-lg);
-  box-shadow: var(--shadow-sm);
+  background: rgba(255, 255, 255, 0.94);
+  border-radius: 8px;
+  box-shadow: 0 16px 45px rgba(0, 29, 69, 0.08);
   overflow: hidden;
   transition: all var(--transition-base);
-  border-left: 4px solid var(--color-gray-300);
+  border: 1px solid rgba(0, 52, 120, 0.08);
+  border-top: 4px solid var(--color-gray-300);
 }
 
 .card-default {
-  border-left-color: var(--color-gray-300);
+  border-top-color: #cbd5e1;
 }
 
 .card-primary {
-  border-left-color: var(--color-primary);
+  border-top-color: var(--color-primary);
 }
 
 .card-success {
-  border-left-color: var(--color-success);
+  border-top-color: var(--color-success);
 }
 
 .card-error {
-  border-left-color: var(--color-error);
+  border-top-color: var(--color-error);
 }
 
 .card-hover:hover {
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 22px 60px rgba(0, 29, 69, 0.14);
   transform: translateY(-2px);
 }
 
 .card-header {
-  padding: var(--spacing-lg);
-  border-bottom: 1px solid var(--color-gray-200);
-  background-color: var(--color-gray-50);
+  padding: var(--spacing-lg) var(--spacing-lg) var(--spacing-md);
+  border-bottom: 1px solid rgba(0, 52, 120, 0.07);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
 }
 
 .card-header h3 {
   margin: 0;
-  color: var(--color-primary);
+  color: var(--color-primary-dark);
+  font-size: 1.08rem;
+  letter-spacing: 0;
 }
 
 .card-body {
@@ -78,8 +81,8 @@ defineProps({
 
 .card-footer {
   padding: var(--spacing-lg);
-  border-top: 1px solid var(--color-gray-200);
-  background-color: var(--color-gray-50);
+  border-top: 1px solid rgba(0, 52, 120, 0.07);
+  background: #f8fbff;
   display: flex;
   gap: var(--spacing-md);
   justify-content: flex-end;
